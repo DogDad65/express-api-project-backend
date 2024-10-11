@@ -49,7 +49,7 @@ const postSchema = new mongoose.Schema({
     username: {
         type: String
     }
-}, { 
+}, {
     timestamps: true
 });
 
