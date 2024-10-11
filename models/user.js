@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { postSchema } = require('./pinsta');
+
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -10,6 +12,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    images: [postSchema],
+    avatar: {
+        type: String,
+    }
 });
 
 userSchema.set('toJSON', {
