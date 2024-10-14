@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { postSchema, commentSchema } = require('../models/pinsta');
+const { Post: Pinsta, Comment } = require('../models/pinsta');
 
 router.get('/', async (req, res) => {
     try {
-        const pinstaDoc = await postSchema.find({}).populate('author_id', 'username')
-        res.status(200).json(pinstaDoc);
+        const pinstaDocs = await Pinsta.find({}).populate('author_id', 'username')
+        res.status(200).json(pinstaDocs);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -14,12 +14,12 @@ router.get('/', async (req, res) => {
 
 router.get('/:pinstaId', async (req, res) => {
     try {
-        const pinstaDoc = await postSchema.findById(req.params.pinstaId)
-        .populate('author_id', 'username', 'comments')
-        if (!pinstaDoc) {
+        const pinstaDocs = await Pinsta.findById(req.params.pinstaId)
+            .populate('author_id', 'username', 'comments')
+        if (!pinstaDocs) {
             return res.status(404).json({ error: 'Pinsta not found' });
         }
-        res.status(200).json(pinstaDoc);
+        res.status(200).json(pinstaDocs);
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -27,19 +27,20 @@ router.get('/:pinstaId', async (req, res) => {
 
 router.post('/:pinstaId/comments', async (req, res) => {
     try {
-        const pinstaDoc = await postSchema.findById(req.params.pinstaId);
-        if(!pinstaDoc) {
-            return res.status(404).json({  error: 'Pinsta not found'});
+        const pinstaDoc = await Pinsta.findById(req.params.pinstaId);
+        if (!pinstaDoc) {
+            return res.status(404).json({ error: 'Pinsta not found' });
         }
-        const newComment = new commentSchema({
+        const newComment = new Comment({
             author_id: req.user._id,
             commentDetails: req.body.commentDetails,
+            post: req.params.pinstaId
         })
 
         pinstaDoc.comments.push(newComment);
         await pinstaDoc.save();
         res.status(200).json(newComment);
-    
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
