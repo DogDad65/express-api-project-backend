@@ -1,3 +1,5 @@
+// middleware/verify-token.js
+
 const jwt = require('jsonwebtoken');
 
 function verifyToken(req, res, next) {
