@@ -4,8 +4,8 @@ const { Post: Pinsta, Comment } = require('../models/pinsta');
 
 router.get('/', async (req, res) => {
     try {
-        const pinstaDoc = await Pinsta.find({}).populate('author_id', 'username')
-        res.status(200).json(pinstaDoc);
+        const pinstaDocs = await Pinsta.find({}).populate('author_id', 'username')
+        res.status(200).json(pinstaDocs);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
