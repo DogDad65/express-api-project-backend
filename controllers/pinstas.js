@@ -1,16 +1,61 @@
 const express = require("express");
 const router = express.Router();
 
-const { Post: PinstaModel } = require("../models/pinsta");
+const { Post: Pinsta } = require("../models/pinsta");
 
-router.post("/", async function (req, res) {
+const verifyToken = require("../middleware/verify-token");
+
+router.get('/', async (req, res) => {
+    try {
+        const pinstaDocs = await Pinsta.find({}).populate('author_id', 'username')
+
+        res.status(200).json(pinstaDocs);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:pinstaId', async (req, res) => {
+    try {
+        const pinstaDoc = await Pinsta.findById(req.params.pinstaId)
+            .populate('author_id', 'username', 'comments')
+        if (!pinstaDoc) {
+            return res.status(404).json({ error: 'Pinsta not found' });
+        }
+        res.status(200).json(pinstaDoc);
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+})
+
+router.post('/:pinstaId/comments', verifyToken, async (req, res) => {
+    try {
+        const pinstaDoc = await Pinsta.findById(req.params.pinstaId);
+        if (!pinstaDoc) {
+            return res.status(404).json({ error: 'Pinsta not found' });
+        }
+        // const newComment = new Comment({
+        //     author_id: req.user._id,
+        //     commentDetails: req.body.commentDetails,
+        // })
+
+        pinstaDoc.comments.push(req.body);
+        await pinstaDoc.save();
+        res.status(200).json(pinstaDoc);
+
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+router.post("/", verifyToken, async function (req, res) {
     try {
         // res.json({ message: "create route" });
         // console.log(req.body);
         // console.log(req.user);
         req.body.author_id = req.user._id;
 
-        const userPinstaDoc = await PinstaModel.create(req.body);
+        const userPinstaDoc = await Pinsta.create(req.body);
         userPinstaDoc._doc.author = req.user;
 
         res.status(201).json(userPinstaDoc);
@@ -21,11 +66,10 @@ router.post("/", async function (req, res) {
     }
 });
 
-router.put("/:pinstaId", async function (req, res) {
+router.put("/:pinstaId", verifyToken, async function (req, res) {
     try {
         // res.json({ message: "Hitting the update route" });
-        const userPinstaDoc = await PinstaModel.findOne({ author_id: req.user._id, _id: req.params.pinstaId });
-        // console.log(userPinstaDoc);
+        const userPinstaDoc = await Pinsta.findOne({ author_id: req.user._id, _id: req.params.pinstaId });
 
         if (!userPinstaDoc) {
             res.status(403).json({
@@ -33,7 +77,7 @@ router.put("/:pinstaId", async function (req, res) {
             });
         };
 
-        const updatedPinsta = await PinstaModel.findByIdAndUpdate(req.params.pinstaId, req.body, { new: true });
+        const updatedPinsta = await Pinsta.findByIdAndUpdate(req.params.pinstaId, req.body, { new: true });
         // console.log(updatedPinsta);
 
         updatedPinsta._doc.author_id = req.user;
@@ -45,11 +89,11 @@ router.put("/:pinstaId", async function (req, res) {
     }
 });
 
-router.delete("/:pinstaId", async function (req, res) {
+router.delete("/:pinstaId", verifyToken, async function (req, res) {
     try {
         // res.json({ message: "Delete Route" });
 
-        const userPinstaDoc = await PinstaModel.findById(req.params.pinstaId);
+        const userPinstaDoc = await Pinsta.findById(req.params.pinstaId);
         // console.log(pinstaDoc);
         if (!userPinstaDoc.author_id.equals(req.user._id)) {
             res.status(403).json({
@@ -57,7 +101,7 @@ router.delete("/:pinstaId", async function (req, res) {
             });
         };
 
-        const deletedUserPinsta = await PinstaModel.findByIdAndDelete(req.params.pinstaId);
+        const deletedUserPinsta = await Pinsta.findByIdAndDelete(req.params.pinstaId);
         // console.log(deletedUserPinsta);
 
         res.status(200).json({ message: "Item was successfully deleted" });
