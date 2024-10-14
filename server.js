@@ -1,3 +1,5 @@
+// server.js
+
 const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
@@ -10,6 +12,8 @@ const verifyToken = require('./middleware/verify-token');
 const profilesRouter = require('./controllers/profiles');
 const pinstaRouter = require('./controllers/pinstas')
 
+
+
 mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on('connected', () => {
@@ -19,13 +23,13 @@ app.use(cors());
 app.use(express.json());
 
 
-
 // Routes go here
 app.use('/test-jwt', testJWTRouter);
 app.use('/users', usersRouter);
 app.use('/profiles', profilesRouter);
 app.use(verifyToken);
 app.use('/pinstas', pinstaRouter)
+
 
 
 app.listen(3000, () => {

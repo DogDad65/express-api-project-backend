@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const { postSchema } = require('./pinsta');
+// models/user.js
 
+const mongoose = require("mongoose");
+const { postSchema } = require("./pinsta");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -8,20 +9,25 @@ const userSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+
     hashedPassword: {
         type: String,
         required: true
     },
-    images: [postSchema],
-    avatar: {
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+    }], avatar: {
         type: String,
-    }
-});
+    },
+}, { timestamps: true }); // Adds createdAt and updatedAt fields
 
-userSchema.set('toJSON', {
+
+// Remove password field from JSON output for security
+userSchema.set("toJSON", {
     transform: (document, returnedObject) => {
         delete returnedObject.hashedPassword;
-    }
+    },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
