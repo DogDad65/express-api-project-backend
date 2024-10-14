@@ -1,3 +1,5 @@
+// models/pinsta.js
+
 const mongoose = require("mongoose");
 
 const likeSchema = new mongoose.Schema({
@@ -17,7 +19,6 @@ const commentSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  // Optional: Array of likes for each comment
   // likes: [likeSchema],
   commentDetails: {
     type: String,
@@ -27,10 +28,10 @@ const commentSchema = new mongoose.Schema({
 
 const postSchema = new mongoose.Schema(
   {
-    photos: [{
+    photos: {
       type: String,
       required: true,
-    }], // Now allows multiple photo URLs
+    },
     title: {
       type: String,
       required: true,
@@ -44,7 +45,6 @@ const postSchema = new mongoose.Schema(
     author_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     username: {
       type: String,
