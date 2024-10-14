@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
 // Remove password field from JSON output for security
 userSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    delete returnedObject.password;
+    delete returnedObject.hashedPassword;
   },
 });
 
