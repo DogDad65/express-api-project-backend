@@ -13,7 +13,6 @@ const profilesRouter = require('./controllers/profiles');
 const pinstaRouter = require('./controllers/pinstas')
 
 
-
 mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on('connected', () => {
@@ -21,6 +20,9 @@ mongoose.connection.on('connected', () => {
 });
 app.use(cors());
 app.use(express.json());
+// server photo upload directory
+// expose the directory to browser
+app.use('/uploads', express.static('uploads'));
 
 
 // Routes go here

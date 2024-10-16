@@ -15,7 +15,7 @@ router.get("/:userId", async (req, res) => {
 
     // Fetch the user profile
     const user = await User.findById(req.params.userId).populate("posts");
-    console.log(user.posts);
+    // console.log(user.posts);
     if (!user) {
       res.status(404);
       throw new Error("Profile not found.");

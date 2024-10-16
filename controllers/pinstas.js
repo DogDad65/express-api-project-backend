@@ -5,6 +5,8 @@ const { Post: Pinsta } = require("../models/pinsta");
 const User = require("../models/user");
 
 const verifyToken = require("../middleware/verify-token");
+const upload = require("../middleware/upload-photo");
+
 
 router.get('/', async (req, res) => {
     try {
@@ -49,11 +51,17 @@ router.post('/:pinstaId/comments', verifyToken, async (req, res) => {
     }
 })
 
-router.post("/", verifyToken, async function (req, res) {
+// upload.single must match the field name in formValues
+router.post("/", verifyToken, upload.single('photos'), async function (req, res) {
     try {
         // res.json({ message: "create route" });
         // console.log(req.body);
         // console.log(req.user);
+
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+        req.body.photos = imageUrl;
+
         req.body.author_id = req.user._id;
 
         const userPinstaDoc = await Pinsta.create(req.body);
