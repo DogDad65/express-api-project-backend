@@ -82,8 +82,14 @@ router.post("/", verifyToken, upload.single('photos'), async function (req, res)
     }
 });
 
-router.put("/:pinstaId", verifyToken, async function (req, res) {
+router.put("/:pinstaId", verifyToken, upload.single('photos'), async function (req, res) {
     try {
+
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        if (imageUrl) {
+            req.body.photos = imageUrl;
+        }
+
         // res.json({ message: "Hitting the update route" });
         const userPinstaDoc = await Pinsta.findOne({ author_id: req.user._id, _id: req.params.pinstaId });
 
