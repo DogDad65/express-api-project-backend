@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('connected', () => {
     console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
 
@@ -28,7 +28,8 @@ app.use('/test-jwt', testJWTRouter);
 app.use('/users', usersRouter);
 app.use('/profiles', profilesRouter);
 // app.use(verifyToken);
-app.use('/pinstas', pinstaRouter)
+app.use('/pinstas', pinstaRouter);
+
 
 
 app.listen(3000, () => {

@@ -23,9 +23,6 @@ router.get("/:userId", verifyToken, async (req, res) => {
     // Fetch user's posts
     // const userPosts = await Pinsta.find({ author_id: req.user._id });
 
-
-
-
     res.json({ user });
   } catch (error) {
     if (error.message === "Profile not found.") {

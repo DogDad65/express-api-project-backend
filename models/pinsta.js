@@ -2,6 +2,7 @@
 
 const mongoose = require("mongoose");
 
+// Define schemas for likes and comments
 const likeSchema = new mongoose.Schema({
     author_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,17 +20,17 @@ const commentSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    // likes: [likeSchema],
     commentDetails: {
         type: String,
         required: true,
     },
 });
 
+// Define the main post schema
 const postSchema = new mongoose.Schema(
     {
         photos: {
-            type: String,
+            type: [String],
             required: true,
         },
         title: {
@@ -56,6 +57,5 @@ const postSchema = new mongoose.Schema(
 );
 
 module.exports = {
-    Post: mongoose.model("Post", postSchema),
-    postSchema,
+    Post: mongoose.model("Post", postSchema),  
 };
