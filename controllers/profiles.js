@@ -7,15 +7,15 @@ const { Post: Pinsta } = require("../models/pinsta");
 const verifyToken = require("../middleware/verify-token");
 
 // GET - Show Profile with User's Posts
-router.get("/:userId", verifyToken, async (req, res) => {
+router.get("/:userId", async (req, res) => {
   try {
-    if (req.user._id !== req.params.userId) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    // if (req.user._id !== req.params.userId) {
+    //   return res.status(401).json({ error: "Unauthorized" });
+    // }
 
     // Fetch the user profile
     const user = await User.findById(req.params.userId).populate("posts");
-    console.log(user);
+    // console.log(user.posts);
     if (!user) {
       res.status(404);
       throw new Error("Profile not found.");
