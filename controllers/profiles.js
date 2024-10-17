@@ -10,6 +10,12 @@ router.get("/:userId", async (req, res) => {
       res.status(404);
       throw new Error("Profile not found.");
     }
+<<<<<<< HEAD
+=======
+    // Fetch user's posts
+    // const userPosts = await Pinsta.find({ author_id: req.user._id });
+
+>>>>>>> test1
     res.json({ user });
   } catch (error) {
     if (error.message === "Profile not found.") {
