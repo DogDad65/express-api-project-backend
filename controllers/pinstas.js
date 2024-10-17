@@ -16,48 +16,43 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pinstaId", async (req, res) => {
-    try {
-      const pinstaDoc = await Pinsta.findById(req.params.pinstaId)
-        .populate("author_id", "username")
-        .populate("comments.author_id", "username") // Populate author details in comments
-        .populate("likes.author_id", "username"); // Populate author details in likes
-  
-      if (!pinstaDoc) {
-        return res.status(404).json({ error: "Pinsta not found" });
-      }
-      res.status(200).json(pinstaDoc);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+  try {
+    const pinstaDoc = await Pinsta.findById(req.params.pinstaId)
+      .populate("author_id", "username")
+      .populate("comments.author_id", "username");
+    if (!pinstaDoc) {
+      return res.status(404).json({ error: "Pinsta not found" });
     }
-  });
+    res.status(200).json(pinstaDoc);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-  router.post("/:pinstaId/comments", verifyToken, async (req, res) => {
-    try {
-      const pinstaDoc = await Pinsta.findById(req.params.pinstaId);
-      if (!pinstaDoc) {
-        return res.status(404).json({ error: "Pinsta not found" });
-      }
-  
-      const newComment = {
-        author_id: req.user._id,
-        commentDetails: req.body.commentDetails,
-      };
-  
-      pinstaDoc.comments.push(newComment);
-      await pinstaDoc.save();
-  
-      const updatedPost = await Pinsta.findById(req.params.pinstaId)
-        .populate("author_id", "username")
-        .populate("comments.author_id", "username")
-        .populate("likes.author_id", "username");
-  
-      res.status(200).json(updatedPost);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+router.post("/:pinstaId/comments", verifyToken, async (req, res) => {
+  try {
+    const pinstaDoc = await Pinsta.findById(req.params.pinstaId);
+    if (!pinstaDoc) {
+      return res.status(404).json({ error: "Pinsta not found" });
     }
-  });
-  
+    const newComment = {
+      author_id: req.user._id,
+      commentDetails: req.body.commentDetails,
+    };
 
+    pinstaDoc.comments.push(newComment); //Switched from .push(req.body)
+    await pinstaDoc.save();
+
+    const updatedPost = await Pinsta.findById(req.params.pinstaId)
+      .populate("author_id", "username")
+      .populate("comments.author_id", "username")
+      .populate("likes.author_id", "username");
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 router.post("/", verifyToken, async function (req, res) {
   try {
