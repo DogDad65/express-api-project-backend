@@ -11,7 +11,7 @@ const usersRouter = require('./controllers/users');
 // const verifyToken = require('./middleware/verify-token');
 const profilesRouter = require('./controllers/profiles');
 const pinstaRouter = require('./controllers/pinstas')
-
+const PORT = process.env.PORT ? process.env.PORT : 3000
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -32,7 +32,6 @@ app.use('/profiles', profilesRouter);
 // app.use(verifyToken);
 app.use('/pinstas', pinstaRouter)
 
-
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log('The express app is ready!');
 });
