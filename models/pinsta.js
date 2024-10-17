@@ -19,7 +19,6 @@ const commentSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    // likes: [likeSchema],
     commentDetails: {
         type: String,
         required: true,

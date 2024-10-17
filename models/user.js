@@ -1,7 +1,4 @@
-// models/user.js
-
 const mongoose = require("mongoose");
-const { postSchema } = require("./pinsta");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -20,10 +17,8 @@ const userSchema = new mongoose.Schema({
     }], avatar: {
         type: String,
     },
-}, { timestamps: true }); // Adds createdAt and updatedAt fields
+}, { timestamps: true });
 
-
-// Remove password field from JSON output for security
 userSchema.set("toJSON", {
     transform: (document, returnedObject) => {
         delete returnedObject.hashedPassword;
